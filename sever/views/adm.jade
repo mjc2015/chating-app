@@ -1,0 +1,89 @@
+doctype html
+html
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    title=title
+    script(type='text/javascript', src='http://www.francescomalagrino.com/BootstrapPageGenerator/3/js/jquery-2.0.0.min.js')
+    script(type='text/javascript', src='http://www.francescomalagrino.com/BootstrapPageGenerator/3/js/jquery-ui')
+    link(href='http://www.francescomalagrino.com/BootstrapPageGenerator/3/css/bootstrap-combined.min.css', rel='stylesheet', media='screen')
+    script(type='text/javascript', src='http://www.francescomalagrino.com/BootstrapPageGenerator/3/js/bootstrap.min.js')
+
+  body(background='/img/back.jpg')
+    h1 管理员权限
+    #MD.container-fluid
+      .row-fluid
+        .span12
+          #tabs-47985.tabbable.tabs-left
+            ul.nav.nav-tabs
+              
+              li.active
+                a(href='#panel-369392', data-toggle='tab') 删除用户信息
+            .tab-content
+              
+              #panel-369392.tab-pane.active
+                form
+                  fieldset
+                    legend 删除用户
+                    label 用户名称
+                    input#name1(type='text')
+                    label.checkbox
+                      button#delete.btn(type='button', onmouseout="this.style.backgroundColor='red'") 提交
+          
+           
+            button#logout.btn(type='button') 注销
+              
+          #popup.alert.alert-warning
+                a#close.close(href='#') &times;
+                div(align='center')
+                  strong#popup-content(style='color: #b12e30;')
+    script(type='text/javascript').
+      $(document).ready(function () {
+        var name1 = $("#name1");
+        var del = $("#delete");
+        var logout = $("#logout");
+        var popup = $("#popup");
+        var popupContent = $("#popup-content");
+        var close = $("#close");
+        popup.hide();
+        close.click(function () {
+          popup.hide();
+        });
+        del.click(function () {
+            $.ajax({
+              url: "/adm/delete",
+              data: {
+                name1: $("#name1").val(),
+              },
+              type: "POST",
+              timeout: 36000,
+              //- dataType: "text",
+              success: function (data, textStatus) {
+                if (data.code == 200) {
+                  popup.show();
+                  popupContent.html("删除成功");
+                } else if (data.code == 400) {
+                  popup.show();
+                  popupContent.html("失败");
+                } else {
+                  popup.show();
+                  popupContent.html("删除出错，数据库中没有该用户！");
+                }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("error:" + textStatus);
+              }
+            });
+        });
+        logout.click(function(){
+          $.ajax({
+            type: 'GET',
+            url: "/adm/logout",
+            success: function (data, textStatus) {
+              window.location.href = "/login";  
+              },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("error:" + textStatus);
+              }
+          });
+        });
+      });
